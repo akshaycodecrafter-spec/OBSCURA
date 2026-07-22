@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBSCURA — Culinary Precision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* DARK BLUE-GREY + WINE RED */
+  --black: #1a1d23;      /* Base Background */
+  --black2: #20232a;     /* Alt Background (Sections) */
+  --black3: #2a2d35;     /* Hover states */
+  --black4: #323640;
+  
+  --white: #ececec;
+  --white2: #d4d4d4;
+  --grey: #9a9a9c;
+  --grey2: #6e6e70;
+  --grey3: #4a4a4c;
+  
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.04);
+  
+  --accent: #B8454E;       /* Wine Red */
+  --accent2: #8A3038;      /* Darker Wine Red */
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ─── CURSOR ─── */
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--white);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width 0.25s, height 0.25s, background 0.25s, opacity 0.25s;
+}
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width 0.35s cubic-bezier(0.34,1.56,0.64,1), height 0.35s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s;
+}
+.cursor.hover { width: 4px; height: 4px; }
+.cursor-ring.hover { width: 48px; height: 48px; border-color: var(--accent); }
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb { background: var(--grey3); }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 28px 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: padding 0.5s, background 0.5s, border-color 0.5s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  padding: 18px 64px;
+  /* Updated nav blur background to match the new gray */
+  background: rgba(24, 24, 26, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-color: var(--border);
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.nav-links {
+  display: flex;
+  gap: 48px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  background: var(--accent);
+  padding: 10px 24px;
+  text-decoration: none;
+  cursor: none;
+  transition: background 0.3s, color 0.3s;
+  border: 1px solid var(--accent);
+}
+.nav-btn:hover {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ─── HERO ─── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 64px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-ghost {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(140px, 22vw, 320px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: rgba(255,255,255,0.025);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  z-index: 0;
+}
+
+.hero-line {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-line::before {
+  content: '';
+  position: absolute;
+  left: 33.33%;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: var(--border2);
+}
+.hero-line::after {
+  content: '';
+  position: absolute;
+  left: 66.66%;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: var(--border2);
+}
+
+.hero-top {
+  position: absolute;
+  top: 130px;
+  right: 64px;
+  text-align: right;
+  z-index: 2;
+}
+.hero-top-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.hero-top-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.hero-content { position: relative; z-index: 2; }
+
+.hero-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.2s forwards;
+}
+
+h1.hero-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(64px, 9vw, 130px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 48px;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 1.1s cubic-bezier(0.22,1,0.36,1) 0.35s forwards;
+}
+h1.hero-heading .line2 {
+  -webkit-text-stroke: 1px var(--accent);
+  color: transparent;
+  display: block;
+}
+
+.hero-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 0.6s forwards;
+}
+.hero-desc {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--grey);
+  max-width: 360px;
+  font-weight: 300;
+}
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.btn-primary {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--accent);
+  padding: 14px 32px;
+  text-decoration: none;
+  border: 1px solid var(--accent);
+  cursor: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.3s, color 0.3s;
+}
+.btn-primary:hover { background: transparent; color: var(--accent); border-color: var(--accent); }
+.btn-ghost {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey);
+  background: transparent;
+  padding: 14px 32px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  cursor: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: color 0.3s, border-color 0.3s;
+}
+.btn-ghost:hover { color: var(--accent); border-color: var(--accent); }
+.btn-arrow {
+  display: inline-block;
+  transition: transform 0.3s;
+}
+.btn-primary:hover .btn-arrow, .btn-ghost:hover .btn-arrow { transform: translateX(4px); }
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 48px;
+  left: 64px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  opacity: 0;
+  animation: fadeUp 1s cubic-bezier(0.22,1,0.36,1) 1s forwards;
+}
+.scroll-line {
+  width: 40px; height: 1px;
+  background: var(--grey3);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-line::after {
+  content: '';
+  position: absolute;
+  left: -100%; top: 0;
+  width: 100%; height: 100%;
+  background: var(--white);
+  animation: scrollLine 2.5s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+.scroll-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--grey2);
+  text-transform: uppercase;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── MARQUEE ─── */
+.marquee-wrap {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+  background: var(--black2);
+}
+.marquee-track {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+.marquee-item {
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--grey2);
+  white-space: nowrap;
+  border-right: 1px solid var(--border);
+  transition: color 0.3s;
+}
+.marquee-item:hover { color: var(--accent); }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ─── SECTION COMMONS ─── */
+.section-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 4.5vw, 60px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.0;
+  color: var(--accent);
+}
+
+/* ─── PRODUCTS (MENU) ─── */
+#products {
+  padding: 140px 64px;
+  position: relative;
+}
+.products-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 64px;
+}
+.products-header-right {
+  font-size: 14px;
+  color: var(--grey);
+  font-weight: 300;
+  max-width: 260px;
+  text-align: right;
+  line-height: 1.7;
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border);
+}
+.product-card {
+  padding: 44px;
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+  transition: background 0.5s;
+}
+.product-card:last-child { border-right: none; }
+.product-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--black3);
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.product-card:hover::before { transform: translateY(0); }
+.product-card > * { position: relative; z-index: 2; }
+
+/* Image Container in Cards */
+.product-img-wrap {
+  width: 100%;
+  height: 240px;
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
+  overflow: hidden;
+  position: relative;
+}
+.product-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) brightness(0.7);
+  transition: filter 0.6s ease, transform 0.6s ease;
+}
+.product-card:hover .product-img-wrap img {
+  filter: grayscale(0%) brightness(1);
+  transform: scale(1.05);
+}
+
+.product-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.product-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  color: var(--accent);
+}
+.product-desc {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--grey);
+  font-weight: 300;
+  margin-bottom: 48px;
+}
+.product-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--grey2);
+  text-decoration: none;
+  cursor: none;
+  transition: color 0.3s;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: color 0.3s, border-color 0.3s;
+}
+.product-link:hover { color: var(--accent); border-color: var(--accent); }
+.product-link-arrow { transition: transform 0.3s; }
+.product-link:hover .product-link-arrow { transform: translateX(4px); }
+.product-ghost-num {
+  position: absolute;
+  bottom: -20px; right: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 120px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.025);
+  letter-spacing: -5px;
+  pointer-events: none;
+  line-height: 1;
+  transition: color 0.5s;
+}
+.product-card:hover .product-ghost-num { color: rgba(255,255,255,0.04); }
+
+/* ─── ABOUT ─── */
+#about {
+  padding: 140px 64px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  position: relative;
+}
+.about-left {
+  padding-right: 80px;
+  border-right: 1px solid var(--border);
+}
+.about-right {
+  padding-left: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* About Section Image */
+.about-main-img {
+  width: 100%;
+  height: 320px;
+  border: 1px solid var(--border);
+  margin-bottom: 48px;
+  overflow: hidden;
+}
+.about-main-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) brightness(0.8);
+  transition: filter 0.6s ease, transform 0.6s ease;
+}
+.about-main-img:hover img {
+  filter: grayscale(0%) brightness(1);
+  transform: scale(1.03);
+}
+
+.about-heading { margin-bottom: 32px; }
+.about-heading .thin {
+  font-weight: 400;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.25);
+  color: transparent;
+}
+.about-body {
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--grey);
+  font-weight: 300;
+  margin-bottom: 48px;
+}
+.about-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.about-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--grey2);
+  border: 1px solid var(--border);
+  padding: 7px 16px;
+  text-transform: uppercase;
+  transition: color 0.3s, border-color 0.3s;
+}
+.about-tag:hover { color: var(--accent); border-color: var(--accent); }
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.stat-box {
+  padding: 36px 32px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.stat-box:nth-child(even) { border-right: none; }
+.stat-box:nth-child(3), .stat-box:nth-child(4) { border-bottom: none; }
+.stat-number {
+  font-family: 'Syne', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--grey2);
+}
+
+/* ─── FEATURES (PROCESS) ─── */
+#features {
+  padding: 140px 64px;
+  border-top: 1px solid var(--border);
+  background: var(--black2);
+}
+.features-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: end;
+  margin-bottom: 80px;
+}
+.features-header-right {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--grey);
+  font-weight: 300;
+  padding-bottom: 4px;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border);
+}
+.feature-cell {
+  padding: 48px 40px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.35s;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Feature Background Hover Image Effect */
+.feature-bg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  z-index: 0;
+  filter: brightness(0.2) grayscale(100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.feature-cell:hover .feature-bg {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.feature-cell:hover { background: var(--black3); }
+.feature-cell:nth-child(3n) { border-right: none; }
+.feature-cell:nth-child(n+4) { border-bottom: none; }
+
+.feature-cell-content { position: relative; z-index: 2; }
+
+.feature-cell-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: 28px;
+  transition: color 0.3s;
+}
+.feature-cell:hover .feature-cell-num { color: var(--grey); }
+
+.feature-cell-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+  color: var(--accent);
+}
+.feature-cell-desc {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--grey);
+  font-weight: 300;
+  transition: color 0.3s;
+}
+.feature-cell:hover .feature-cell-desc { color: var(--white2); }
+
+.feature-cell-bar {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px;
+  background: var(--accent);
+  width: 0;
+  z-index: 3;
+  transition: width 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.feature-cell:hover .feature-cell-bar { width: 100%; }
+
+#reviews { padding: 140px 64px; border-top: 1px solid var(--border); }
+.reviews-intro { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 72px; }
+.reviews-count { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--grey2); text-transform: uppercase; }
+.reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--border); }
+.review-card { padding: 44px 40px; border-right: 1px solid var(--border); transition: background 0.35s; }
+.review-card:last-child { border-right: none; }
+.review-card:hover { background: var(--black2); }
+.review-rating { display: flex; gap: 4px; margin-bottom: 24px; }
+.review-star { width: 10px; height: 10px; background: var(--accent); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.review-text { font-size: 15px; line-height: 1.8; color: var(--white2); font-weight: 300; margin-bottom: 36px; font-style: italic; }
+.review-divider { height: 1px; background: var(--border); margin-bottom: 28px; }
+.review-author { display: flex; align-items: center; gap: 16px; }
+.review-avatar { width: 40px; height: 40px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--grey); flex-shrink: 0; }
+.review-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 3px; letter-spacing: -0.01em; color: var(--accent); }
+.review-role { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase; }
+
+#contact { padding: 140px 64px; border-top: 1px solid var(--border); background: var(--black2); display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.contact-left { padding-right: 80px; border-right: 1px solid var(--border); }
+.contact-heading { margin-bottom: 24px; }
+.contact-sub { font-size: 15px; line-height: 1.8; color: var(--grey); font-weight: 300; margin-bottom: 56px; }
+.contact-info { display: flex; flex-direction: column; gap: 20px; }
+.contact-info-item { display: flex; align-items: center; gap: 20px; padding: 20px 24px; border: 1px solid var(--border); transition: border-color 0.3s, background 0.3s; }
+.contact-info-item:hover { border-color: rgba(255,255,255,0.2); background: var(--black3); }
+.ci-label { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; flex: 0 0 80px; }
+.ci-value { font-size: 14px; color: var(--white2); font-weight: 400; }
+.contact-right { padding-left: 80px; }
+.contact-form { display: flex; flex-direction: column; gap: 0; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; }
+.form-field { position: relative; border: 1px solid var(--border); margin-right: -1px; margin-bottom: -1px; }
+.form-field.full { grid-column: span 2; }
+.form-field label { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--grey2); position: absolute; top: 18px; left: 24px; transition: font-size 0.2s, top 0.2s, color 0.2s; pointer-events: none; }
+.form-field input, .form-field textarea { width: 100%; background: transparent; border: none; outline: none; padding: 36px 24px 16px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--white); font-weight: 300; resize: none; appearance: none; cursor: none; }
+.form-field textarea { min-height: 120px; }
+.form-field:focus-within { border-color: rgba(255,255,255,0.25); z-index: 1; }
+.form-field:focus-within label { font-size: 8px; top: 12px; color: var(--grey); }
+.form-submit { padding: 22px 40px; background: var(--accent); border: 1px solid var(--accent); font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); cursor: none; transition: background 0.3s, color 0.3s; width: 100%; display: flex; align-items: center; justify-content: space-between; margin-top: 0; margin-bottom: -1px; }
+.form-submit:hover { background: var(--black); color: var(--accent); border-color: var(--accent); }
+.submit-arrow { transition: transform 0.3s; }
+.form-submit:hover .submit-arrow { transform: translateX(6px); }
+
+footer { padding: 80px 64px 48px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 80px; }
+.footer-logo { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; color: var(--accent); }
+.footer-tagline { font-size: 13px; line-height: 1.75; color: var(--grey); font-weight: 300; max-width: 220px; margin-bottom: 32px; }
+.footer-socials { display: flex; gap: 8px; }
+.footer-social { width: 36px; height: 36px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--grey2); text-decoration: none; cursor: none; transition: border-color 0.3s, color 0.3s; }
+.footer-social:hover { border-color: var(--accent); color: var(--accent); }
+.footer-col-title { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+.footer-col-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-col-links a { font-size: 13px; color: var(--grey); text-decoration: none; font-weight: 300; cursor: none; transition: color 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+.footer-col-links a:hover { color: var(--white); }
+.footer-bottom { border-top: 1px solid var(--border); padding: 24px 64px; display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--grey3); text-transform: uppercase; }
+.footer-bottom-right { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--grey3); text-transform: uppercase; }
+
+.reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+
+@media (max-width: 1100px) {
+  nav { padding: 24px 32px; } nav.scrolled { padding: 16px 32px; } #hero { padding: 0 32px 80px; } .hero-top { right: 32px; } .hero-scroll-hint { left: 32px; } #products { padding: 100px 32px; } .products-grid { grid-template-columns: 1fr; } .product-card { border-right: none; border-bottom: 1px solid var(--border); } .product-card:last-child { border-bottom: none; } #about { padding: 100px 32px; grid-template-columns: 1fr; gap: 60px; } .about-left { padding-right: 0; border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 60px; } .about-right { padding-left: 0; } #features { padding: 100px 32px; } .features-header { grid-template-columns: 1fr; gap: 20px; } .features-grid { grid-template-columns: 1fr 1fr; } .feature-cell:nth-child(3n) { border-right: 1px solid var(--border); } .feature-cell:nth-child(2n) { border-right: none; } #reviews { padding: 100px 32px; } .reviews-grid { grid-template-columns: 1fr; } .review-card { border-right: none; border-bottom: 1px solid var(--border); } .review-card:last-child { border-bottom: none; } #contact { padding: 100px 32px; grid-template-columns: 1fr; gap: 60px; } .contact-left { padding-right: 0; border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 60px; } .contact-right { padding-left: 0; } footer { padding: 80px 32px 48px; grid-template-columns: 1fr 1fr; gap: 48px; } .footer-bottom { padding: 20px 32px; } .nav-links { display: none; }
+}
+@media (max-width: 640px) {
+  h1.hero-heading { letter-spacing: -0.03em; } .hero-btns { flex-direction: column; align-items: flex-start; } .products-header { flex-direction: column; align-items: flex-start; gap: 16px; } .products-header-right { text-align: left; max-width: 100%; } .features-grid { grid-template-columns: 1fr; } .feature-cell:nth-child(2n), .feature-cell:nth-child(3n) { border-right: none; } footer { grid-template-columns: 1fr; gap: 40px; } .reviews-intro { flex-direction: column; align-items: flex-start; gap: 12px; } .form-row { grid-template-columns: 1fr; } .form-field.full { grid-column: span 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="nav">
+  <div class="nav-logo">OBSCURA</div>
+  <ul class="nav-links">
+    <li><a href="#products">Menu</a></li>
+    <li><a href="#about">Philosophy</a></li>
+    <li><a href="#features">Process</a></li>
+    <li><a href="#reviews">Critics</a></li>
+    <li><a href="#contact">Reservations</a></li>
+  </ul>
+  <a href="#contact" class="nav-btn">Book Table <span class="btn-arrow">→</span></a>
+</nav>
+
+<section id="hero">
+  <div class="hero-ghost">OBSCURA</div>
+  <div class="hero-line"></div>
+  <div class="hero-top">
+    <div class="hero-top-label">Est. 2026</div>
+    <div class="hero-top-tag">Omakase Experience</div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Culinary / Precision</div>
+    <h1 class="hero-heading">
+      Taste<br>
+      <span class="line2">Different.</span>
+    </h1>
+    <div class="hero-bottom">
+      <p class="hero-desc">We craft culinary experiences stripped of distraction. Pure ingredients, precision techniques, and uncompromising flavor.</p>
+      <div class="hero-btns">
+        <a href="#products" class="btn-primary">View Menu <span class="btn-arrow">→</span></a>
+        <a href="#contact" class="btn-ghost">Reserve <span class="btn-arrow">→</span></a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item">Modern Gastronomy</div>
+    <div class="marquee-item">Zero Waste</div>
+    <div class="marquee-item">Pure Ingredients</div>
+    <div class="marquee-item">Precision Plating</div>
+    <div class="marquee-item">Sensory Experience</div>
+    <div class="marquee-item">Chef's Table</div>
+    <div class="marquee-item">Rare Vintages</div>
+    <div class="marquee-item">Modern Gastronomy</div>
+    <div class="marquee-item">Zero Waste</div>
+    <div class="marquee-item">Pure Ingredients</div>
+    <div class="marquee-item">Precision Plating</div>
+    <div class="marquee-item">Sensory Experience</div>
+    <div class="marquee-item">Chef's Table</div>
+    <div class="marquee-item">Rare Vintages</div>
+  </div>
+</div>
+
+<section id="products">
+  <div class="products-header reveal">
+    <div>
+      <div class="section-eyebrow">The Experience</div>
+      <div class="section-title">Engineered<br>Flavor</div>
+    </div>
+    <p class="products-header-right">Three distinct dining experiences. Each curated with obsessive attention to detail, seasonality, and purpose.</p>
+  </div>
+  <div class="products-grid">
+    <div class="product-card reveal">
+      <div class="product-num">001</div>
+      <div class="product-img-wrap">
+        <img src="https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?auto=format&fit=crop&w=800&q=80" alt="Fine Dining Plating">
+      </div>
+      <h3 class="product-name">The Tasting</h3>
+      <p class="product-desc">A 12-course exploration of modern technique applied to ancient ingredients. The menu evolves daily with the micro-seasons.</p>
+      <a href="#" class="product-link">View Sample Menu <span class="product-link-arrow">→</span></a>
+      <div class="product-ghost-num">01</div>
+    </div>
+    <div class="product-card reveal reveal-d1">
+      <div class="product-num">002</div>
+      <div class="product-img-wrap">
+        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80" alt="Omakase Dish">
+      </div>
+      <h3 class="product-name">The Omakase</h3>
+      <p class="product-desc">Intimate counter seating. No menus, no choices. Trust the chef to guide you through a brutalist approach to raw seafood.</p>
+      <a href="#" class="product-link">Learn More <span class="product-link-arrow">→</span></a>
+      <div class="product-ghost-num">02</div>
+    </div>
+    <div class="product-card reveal reveal-d2">
+      <div class="product-num">003</div>
+      <div class="product-img-wrap">
+        <img src="https://images.unsplash.com/photo-1516684732162-798a0062be99?auto=format&fit=crop&w=800&q=80" alt="Wine Cellar Pour">
+      </div>
+      <h3 class="product-name">The Cellar</h3>
+      <p class="product-desc">Private dining enveloped by our collection of rare, low-intervention vintages. Includes a master sommelier pairing.</p>
+      <a href="#" class="product-link">Enquire <span class="product-link-arrow">→</span></a>
+      <div class="product-ghost-num">03</div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="about-left">
+    <div class="about-label reveal section-eyebrow">Our Philosophy</div>
+    <h2 class="about-heading section-title reveal reveal-d1">Art on<br><span class="thin">A Plate.</span></h2>
+    <p class="about-body reveal reveal-d2">OBSCURA was founded on a single conviction: that true luxury is the absence of the unnecessary. We strip away the loud colors and theatrical fluff of fine dining. What remains is pure utility wrapped in brutalist elegance.<br><br>No garnishes without purpose. No compromises.</p>
+    <div class="about-tags reveal reveal-d3">
+      <span class="about-tag">Farm-To-Table</span>
+      <span class="about-tag">Hyper-Seasonal</span>
+      <span class="about-tag">Minimalist</span>
+      <span class="about-tag">Zero Waste</span>
+      <span class="about-tag">Charcoal Fired</span>
+    </div>
+  </div>
+  <div class="about-right">
+    <div class="about-main-img reveal">
+        <img src="https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&fit=crop&w=800&q=80" alt="Chef Preparing Dish">
+    </div>
+    <div class="stats-grid reveal reveal-d1">
+      <div class="stat-box">
+        <div class="stat-number" data-count="3">0</div>
+        <div class="stat-label">Award Stars</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" data-count="12">0</div>
+        <div class="stat-label">Courses</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" data-count="400">0</div>
+        <div class="stat-label">Rare Wines</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number" data-count="0">10</div>
+        <div class="stat-label">% Food Waste</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="features-header">
+    <div>
+      <div class="section-eyebrow reveal">The Process</div>
+      <h2 class="section-title reveal reveal-d1">Built Without<br>Compromise</h2>
+    </div>
+    <p class="features-header-right reveal reveal-d1">Every element on the plate earns its place. We remove before we add. The result is a sensory experience that feels effortless because it was designed that way.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-cell reveal">
+      <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80" class="feature-bg" alt="Foraging">
+      <div class="feature-cell-content">
+        <div class="feature-cell-num">01</div>
+        <h3 class="feature-cell-title">Foraging</h3>
+        <p class="feature-cell-desc">Our team sources wild ingredients daily from local forests and coastlines. Nature dictates the menu.</p>
+      </div>
+      <div class="feature-cell-bar"></div>
+    </div>
+    <div class="feature-cell reveal reveal-d1">
+      <img src="https://images.unsplash.com/photo-1582878826629-29b7ad1cb438?auto=format&fit=crop&w=600&q=80" class="feature-bg" alt="Fermentation">
+      <div class="feature-cell-content">
+        <div class="feature-cell-num">02</div>
+        <h3 class="feature-cell-title">Fermentation</h3>
+        <p class="feature-cell-desc">A dedicated lab exploring deep umami through ancient fermentation techniques and controlled aging.</p>
+      </div>
+      <div class="feature-cell-bar"></div>
+    </div>
+    <div class="feature-cell reveal reveal-d2">
+      <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80" class="feature-bg" alt="Open Fire">
+      <div class="feature-cell-content">
+        <div class="feature-cell-num">03</div>
+        <h3 class="feature-cell-title">Open Fire</h3>
+        <p class="feature-cell-desc">No sous-vide. We harness the unpredictability of binchotan charcoal and open flame to build texture.</p>
+      </div>
+      <div class="feature-cell-bar"></div>
+    </div>
+    <div class="feature-cell reveal reveal-d1">
+      <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=600&q=80" class="feature-bg" alt="Isolation">
+      <div class="feature-cell-content">
+        <div class="feature-cell-num">04</div>
+        <h3 class="feature-cell-title">Isolation</h3>
+        <p class="feature-cell-desc">Acoustically treated dining rooms and monochromatic interiors to remove sensory distraction from the food.</p>
+      </div>
+      <div class="feature-cell-bar"></div>
+    </div>
+    <div class="feature-cell reveal reveal-d2">
+      <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80" class="feature-bg" alt="Liquid Pairing">
+      <div class="feature-cell-content">
+        <div class="feature-cell-num">05</div>
+        <h3 class="feature-cell-title">Liquid Pairing</h3>
+        <p class="feature-cell-desc">Curated pairings focusing on low-intervention wines, house-made kombuchas, and botanical distillates.</p>
+      </div>
+      <div class="feature-cell-bar"></div>
+    </div>
+    <div class="feature-cell reveal reveal-d3">
+      <img src="https://images.unsplash.com/photo-1505826759037-406b40feb4cd?auto=format&fit=crop&w=600&q=80" class="feature-bg" alt="Precision">
+      <div class="feature-cell-content">
+        <div class="feature-cell-num">06</div>
+        <h3 class="feature-cell-title">Precision</h3>
+        <p class="feature-cell-desc">Every slice, temperature, and drop of sauce is calculated. The execution is relentless.</p>
+      </div>
+      <div class="feature-cell-bar"></div>
+    </div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="reviews-intro">
+    <div>
+      <div class="section-eyebrow reveal">The Critics</div>
+      <h2 class="section-title reveal reveal-d1">Industry<br>Acclaim</h2>
+    </div>
+    <div class="reviews-count reveal">Global Dining Awards — 2026</div>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <div class="review-rating">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"OBSCURA strips fine dining down to its bare, beautiful bones. The first time in years that a tasting menu has actually made me rethink food instead of just promising to."</p>
+      <div class="review-divider"></div>
+      <div class="review-author">
+        <div class="review-avatar">GG</div>
+        <div>
+          <div class="review-name">Global Gourmet Awards</div>
+          <div class="review-role">Gold Medal, 2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal reveal-d1">
+      <div class="review-rating">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"The level of craft here is absurd. The kitchen executes complex, primal techniques that just seem to happen effortlessly on the plate. Brutalism meets gastronomy."</p>
+      <div class="review-divider"></div>
+      <div class="review-author">
+        <div class="review-avatar">MW</div>
+        <div>
+          <div class="review-name">Marcus Webb</div>
+          <div class="review-role">Culinary Weekly</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal reveal-d2">
+      <div class="review-rating">
+        <div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div><div class="review-star"></div>
+      </div>
+      <p class="review-text">"I've eaten everywhere. OBSCURA is the only dining room I've encountered that removes the noise of the modern world entirely. Extraordinary culinary engineering."</p>
+      <div class="review-divider"></div>
+      <div class="review-author">
+        <div class="review-avatar">JC</div>
+        <div>
+          <div class="review-name">James Chen</div>
+          <div class="review-role">The Dining Review</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-left">
+    <div class="section-eyebrow reveal">Reservations</div>
+    <h2 class="contact-heading section-title reveal reveal-d1">Secure a<br>Table</h2>
+    <p class="contact-sub reveal reveal-d2">Reservations open 30 days in advance at 10:00 AM JST. For private cellar bookings, please submit your request below.</p>
+    <div class="contact-info reveal reveal-d3">
+      <div class="contact-info-item">
+        <span class="ci-label">Location</span>
+        <span class="ci-value">Tokyo, Japan</span>
+      </div>
+      <div class="contact-info-item">
+        <span class="ci-label">Service</span>
+        <span class="ci-value">Dinner Only. Wed — Sun.</span>
+      </div>
+      <div class="contact-info-item">
+        <span class="ci-label">Dress</span>
+        <span class="ci-value">Minimalist / Dark Tones</span>
+      </div>
+    </div>
+  </div>
+  <div class="contact-right reveal reveal-d1">
+    <form class="contact-form" onsubmit="return false;">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="fname">First Name</label>
+          <input type="text" id="fname" autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="lname">Last Name</label>
+          <input type="text" id="lname" autocomplete="off">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field full">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" autocomplete="off">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="date">Requested Date (DD/MM/YY)</label>
+          <input type="text" id="date" autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="guests">Number of Guests</label>
+          <input type="number" id="guests" min="1" max="6" autocomplete="off">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field full">
+          <label for="message">Dietary Restrictions / Notes</label>
+          <textarea id="message"></textarea>
+        </div>
+      </div>
+      <button type="submit" class="form-submit">
+        <span>Request Reservation</span>
+        <span class="submit-arrow">→</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div>
+    <div class="footer-logo">OBSCURA</div>
+    <p class="footer-tagline">Culinary experiences engineered for those who refuse to settle for ordinary.</p>
+    <div class="footer-socials">
+      <a href="#" class="footer-social" title="Instagram">IG</a>
+      <a href="#" class="footer-social" title="X">𝕏</a>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Menus</div>
+    <ul class="footer-col-links">
+      <li><a href="#">The Tasting →</a></li>
+      <li><a href="#">Omakase →</a></li>
+      <li><a href="#">Wine Pairings →</a></li>
+      <li><a href="#">Private Cellar →</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">Restaurant</div>
+    <ul class="footer-col-links">
+      <li><a href="#">Philosophy →</a></li>
+      <li><a href="#">The Team →</a></li>
+      <li><a href="#">Press →</a></li>
+      <li><a href="#">Careers →</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-col-title">Information</div>
+    <ul class="footer-col-links">
+      <li><a href="#">Cancellation Policy →</a></li>
+      <li><a href="#">Dietary Info →</a></li>
+      <li><a href="#">Location →</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <div class="footer-copy">© 2026 OBSCURA Dining Group. All rights reserved.</div>
+  <div class="footer-bottom-right">Tokyo, JP</div>
+</div>
+
+<script>
+  // ─── CURSOR ───
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  (function animRing() {
+    rx += (mx - rx) * 0.1;
+    ry += (my - ry) * 0.1;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+
+  document.querySelectorAll('a, button, .product-card, .feature-cell, .review-card, .contact-info-item').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+    el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+  });
+
+  // ─── NAV SCROLL ───
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // ─── SCROLL REVEAL ───
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => revealObs.observe(el));
+
+  // ─── COUNT UP ───
+  function countUp(el, target, dur = 1800) {
+    let start = 0;
+    const step = target / (dur / 16);
+    const t = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = Math.floor(start);
+      if (start >= target) clearInterval(t);
+    }, 16);
+  }
+  const statsObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        document.querySelectorAll('.stat-number[data-count]').forEach(el => {
+          countUp(el, parseInt(el.dataset.count));
+        });
+        statsObs.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  const statsSection = document.querySelector('.stats-grid');
+  if (statsSection) statsObs.observe(statsSection);
+
+  // ─── FORM FLOAT LABEL ───
+  document.querySelectorAll('.form-field input, .form-field textarea').forEach(input => {
+    input.addEventListener('focus', () => {});
+    input.addEventListener('blur', () => {});
+  });
+</script>
+</body>
+</html>
