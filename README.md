@@ -2,7 +2,7 @@
 
 Fine dining, stripped of noise.
 
-🔗 **Live:** [REPLACE_WITH_ACTUAL_URL]
+🔗 **Live:** https://obscura.akshaycodecrafter.workers.dev/
 
 ## Preview
 
